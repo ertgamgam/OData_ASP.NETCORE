@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using ASP.NET_CORE_OData.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNet.OData.Extensions;
 
 namespace ASP.NET_CORE_OData
 {
@@ -24,6 +21,9 @@ namespace ASP.NET_CORE_OData
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddDbContext<ODataDBContext>(options => options.UseInMemoryDatabase("ODataDB"));
+            services.AddDbContext<ODataDBContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:LocalSQLServer"]));
+            services.AddOData();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -35,7 +35,15 @@ namespace ASP.NET_CORE_OData
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
+            app.UseMvc(
+                routeBuilder =>
+                {
+
+                    routeBuilder.EnableDependencyInjection();
+
+                    routeBuilder.Expand().Select().OrderBy().Filter();
+
+                });
         }
     }
 }

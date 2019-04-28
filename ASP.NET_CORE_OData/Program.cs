@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using ASP.NET_CORE_OData.Context;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-
+//https://devblogs.microsoft.com/odata/supercharging-asp-net-core-api-with-odata/
 namespace ASP.NET_CORE_OData
 {
     public class Program
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            CreateWebHostBuilder(args).Build().MigrateDbContext<ODataDBContext>((x,y)=> { }).Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
